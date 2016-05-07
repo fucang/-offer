@@ -1,0 +1,78 @@
+/*
+*题目描述:
+*输入某二叉树的前序遍历和中序遍历的结果，请重建出该二叉树。
+*假设输入的前序遍历和中序遍历的结果中都不含重复的数字。
+*例如输入前序遍历序列{1,2,4,7,3,5,6,8}和中序遍历序列{4,7,2,1,5,3,8,6}，
+*则重建二叉树并返回。
+*/
+
+/*
+* Definition for binary tree
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	struct TreeNode* reConstructBinaryTree(vector<int> pre, vector<int> in) {
+		size_t preSize = pre.size();
+		size_t inSize = in.size();
+		//assert(preSize == inSize);
+		struct TreeNode* root = NULL;
+		size_t preBegin = 0;
+		size_t preEnd = preSize - 1;
+		try
+		{
+			//创建前序遍历的每个节点的左右子树
+			root = reConstructLRTree(pre, preBegin, preEnd, in, 0, inSize - 1);
+		}
+		catch (struct TreeNode)
+		{
+			cout << "输入序列错误" << endl;
+		}
+		return root;
+	}
+	struct TreeNode* reConstructLRTree(const vector<int>& pre, size_t& preBegin, size_t& preEnd,
+		const vector<int>& in, size_t inBegin, size_t inEnd)
+	{
+		//根据中序遍历确定每个节点的左右子树，位于根节点之前的为左子树，之后的为右子树
+		struct TreeNode* root = new TreeNode(pre[preBegin]);
+		size_t bound = inBegin; //分界
+		for (bound = inBegin; bound <= inEnd; ++bound)
+		{
+			if (in[bound] == pre[preBegin])
+			{
+				break;
+			}
+		}
+		if (bound > inEnd)
+		{
+			struct TreeNode tmp(0);
+			throw(tmp);
+			//throw(struct TreeNode(0));
+		}
+		if (bound == inBegin)
+		{
+			root->left = NULL; //左子树为空
+		}
+		else
+		{
+			//创建左子树
+			root->left = reConstructLRTree(pre, ++preBegin, preEnd, in, inBegin, bound - 1);
+		}
+		if (bound == inEnd)
+		{
+			root->right = NULL; //右子树为空
+		}
+		else
+		{
+			//创建右子树
+			root->right = reConstructLRTree(pre, ++preBegin, preEnd, in, bound + 1, inEnd);
+		}
+
+		return root;
+	}
+};
