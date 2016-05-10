@@ -1,0 +1,43 @@
+/*
+*题目描述：给定一个double类型的浮点数base和int类型的整数exponent。
+*求base的exponent次方。
+*/
+double Power(double base, int exponent) 
+{
+	//任何数的0次方均为1
+	if (exponent == 0)
+	{
+		return 1;
+	}
+
+	//0的非0次方为0
+	if (base >= -0.0000001 && base <= 0.0000001)
+	{
+		return 0;
+	}
+
+	//小于0，调用大于0，再去倒数即可
+	else if (exponent < 0)
+	{
+		//因为整数的最小比最大多一个数所以当为最小时，转为求整数后，需再除一个base
+		if (exponent == INT_MIN)
+		{
+			return 1 / (Power(base, -exponent)*base);
+		}
+		else
+		{
+			return 1 / (Power(base, -exponent));
+		}
+	}
+
+	//大于0
+	else
+	{
+		double ret = 1;
+		while (exponent--)
+		{
+			ret *= base;
+		}
+		return ret;
+	}
+}
