@@ -1,0 +1,60 @@
+/*
+struct ListNode {
+int val;
+struct ListNode *next;
+ListNode(int x) :
+val(x), next(NULL) {
+}
+};*/
+/*
+*输入两个单调递增的链表，输出两个链表合成后的链表，
+*当然我们需要合成后的链表满足单调不减规则。
+*/
+ListNode* Merge(ListNode* pHead1, ListNode* pHead2)
+{
+	if (pHead1 == NULL)
+	{
+		return pHead2;
+	}
+	if (pHead2 == NULL)
+	{
+		return pHead1;
+	}
+	ListNode* curA = pHead1;
+	ListNode* curB = pHead2;
+	ListNode* headC = NULL;
+	if (curA->val <= curB->val)
+	{
+		headC = curA;
+		curA = curA->next;
+	}
+	else
+	{
+		headC = curB;
+		curB = curB->next;
+	}
+	ListNode* curC = headC;
+	while (curA&&curB)
+	{
+		if (curA->val <= curB->val)
+		{
+			curC->next = curA;
+			curA = curA->next;
+		}
+		else
+		{
+			curC->next = curB;
+			curB = curB->next;
+		}
+		curC = curC->next;
+	}
+	if (curA)
+	{
+		curC->next = curA;
+	}
+	if (curB)
+	{
+		curC->next = curB;
+	}
+	return headC;
+}
