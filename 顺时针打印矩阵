@@ -1,0 +1,45 @@
+//打印
+vector<int> printMatrix(const vector<vector<int>>& matrix)
+{
+	int start = 0;
+	size_t row = matrix.size();
+	size_t col = matrix[0].size();
+	vector<int> ret;
+	while (start < row && start < col)
+	{
+		PrintMatInCircle(matrix, ret, row, col, start++);
+		row--;
+		col--;
+	}
+	return ret;
+}
+//按圈打印
+void PrintMatInCircle(const vector<vector<int>>& matrix, vector<int>& ret,int row, int col, int start)
+{
+	//向左
+	for (int j = start; j < col; ++j)
+	{
+		ret.push_back(matrix[start][j]);
+	}
+	//向下
+	for (int i = start + 1; i < row; ++i)
+	{
+		ret.push_back(matrix[i][col - 1]);
+	}
+	//向左
+	if (start < row - 1)
+	{
+		for (int j = col - 2; j >= start; --j)
+		{
+			ret.push_back(matrix[row - 1][j]);
+		}
+	}
+	//向上
+	if (start < col - 1)
+	{
+		for (int i = row - 2; i>start; --i)
+		{
+			ret.push_back(matrix[i][start]);
+		}
+	}
+}
