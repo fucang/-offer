@@ -1,0 +1,33 @@
+bool IsPopOrder(const vector<int>& push, const vector<int>& pop)
+{
+	stack<int> cur;
+	int indexPush = 0;
+	int indexPop = 0;
+	int sizePush = push.size();
+	int sizePop = pop.size();
+	if (sizePush == 0 || sizePop == 0)
+	{
+		return false;
+	}
+	while (indexPop < sizePop)
+	{
+		if (!cur.empty() && cur.top() == pop[indexPop])
+		{
+			cur.pop();
+			++indexPop;
+		}
+		else
+		{
+			while (indexPush < sizePush && push[indexPush] != pop[indexPop])
+			{
+				cur.push(push[indexPush++]);
+			}
+			if (indexPush == sizePush)
+			{
+				return false;
+			}
+			cur.push(push[indexPush++]);
+		}	
+	}
+	return true;
+}
