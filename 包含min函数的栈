@@ -1,0 +1,37 @@
+template <typename T>
+class MinStack
+{
+public:
+	void Push(const T& data)
+	{
+		this->_data.push(data);
+		if (this->_min.empty() || data < this->_min.top())
+		{
+			this->_min.push(data);
+		}
+		else
+		{
+			this->_min.push(this->_min.top());
+		}
+	}
+	void Pop()
+	{
+		assert(this->_data.empty() && this->_min.empty());
+		this->_data.pop();
+		this->_min.pop();		
+	}
+	T Top()
+	{
+		assert(this->_data.empty() && this->_min.empty());
+		return this->_data.top();
+	}
+
+	T Min()
+	{
+		assert(this->_data.empty() && this->_min.empty());
+		return this->_min.top();
+	}
+protected:
+	stack<T> _data;
+	stack<T> _min;
+};
