@@ -1,0 +1,48 @@
+/*
+*输入一个字符串,按字典序打印出该字符串中字符的所有排列。
+*例如输入字符串abc,则打印出由字符a,b,c所能排列出来的所有
+*字符串abc,acb,bac,bca,cab和cba。 结果请按字母顺序输出。 
+*/
+#include <iostream>
+using namespace std;
+#include <vector>
+#include <string>
+#include <algorithm>//sort
+//abcd
+void Permutation(vector<string>& ret, string str, int begin)
+{
+	if (str.c_str() == "\0")
+	{
+		return;
+	}
+	if (begin == str.size() - 1)
+	{
+		ret.push_back(str);
+		return;
+	}
+	for (int i = begin; i < str.size(); ++i)
+	{
+		//有重复字符，跳过
+		if (i != begin&&str[i] == str[begin])
+		{
+			continue;
+		}
+		swap(str[i], str[begin]);
+		Permutation(ret, str, begin + 1);
+		swap(str[i], str[begin]);//换回去
+	}
+}
+
+vector<string> Permutation(string str) 
+{
+	vector<string> ret;
+	if (str.c_str() == "\0")
+	{
+		return ret;
+	}
+	size_t size = str.size();
+
+	Permutation(ret, str, 0);
+	sort(ret.begin(), ret.end());
+}
+
