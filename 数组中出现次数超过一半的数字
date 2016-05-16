@@ -1,0 +1,94 @@
+//方法1：采用快排的思想，会改变原有数组
+int Partition(vector<int>& numbers, size_t left, size_t right)
+{
+	int tmp = numbers[left];
+	while (left < right)
+	{
+		while (left < right && numbers[right] >= tmp)
+		{
+			--right;
+		}
+		if (left < right)
+		{
+			swap(numbers[left], numbers[right]);
+			++left;
+		}
+		while (left < right && numbers[left] < tmp)
+		{
+			++left;
+		}
+		if (left < right)
+		{
+			swap(numbers[left], numbers[right]);
+			--right;
+		}
+	}
+	numbers[left] = tmp;
+	return left;
+}
+
+int MoreThanHalfNum(vector<int> numbers)
+{
+	int mid = numbers.size() >> 1;
+	int left = 0;
+	int right = numbers.size() - 1;
+	int index = Partition(numbers, left, right);
+	while (index != mid)
+	{
+		if (index < mid)
+		{
+			left = index + 1;
+		}
+		else
+		{
+			right = index - 1;
+		}
+		index = Partition(numbers, left, right);
+	}
+	return numbers[mid];
+}
+
+//方法二：依据数组的特点
+int MoreThanHalfNum_Solution(vector<int> numbers) 
+{
+	int count = 0;
+	int tmp = numbers[0];
+	for (int i = 0; i < numbers.size(); ++i)
+	{
+		if (count == 0)
+		{
+			tmp = numbers[i];
+		}
+		if (tmp == numbers[i])
+		{
+			++count;
+		}
+		else
+		{
+			--count;
+		}
+	}
+	if (!Check(numbers, tmp))
+	{
+		return 0;
+	}
+	return tmp;
+}
+
+//检验是否真的有个数字出现的次数超过了数组长度的一半
+bool Check(const vector<int>& numbers, int num)
+{
+	int times = 0;
+	for (int i = 0; i < numbers.size(); ++i)
+	{
+		if (numbers[i] == num)
+		{
+			++times;
+		}
+	}
+	if (times * 2 <= numbers.size())
+	{
+		return false;
+	}
+	return true;
+}
