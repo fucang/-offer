@@ -1,0 +1,120 @@
+//O(n):基于Partition，快排的思想
+int Partition(vector<int>& input, int left, int right)
+{
+	int tmp = input[left];
+	while (left < right)
+	{
+		while (left < right && input[right] >= tmp)
+		{
+			--right;
+		}
+		if (left < right)
+		{
+			swap(input[left], input[right]);
+			++left;
+		}
+		while (left < right && input[left] <= tmp)
+		{
+			++left;
+		}
+		if (left < right)
+		{
+			swap(input[left], input[right]);
+			--right;
+		}
+	}
+	input[left] = tmp;
+	return left;
+}
+vector<int> GetLeastNumbers_Quick(vector<int> input, int k)
+{
+	if (k >= input.size())
+	{
+		return input;
+	}
+	vector<int> ret;
+	if (k <= 0)
+	{
+		return ret;
+	}
+	int left = 0;
+	int right = input.size() - 1;
+	int index = Partition(input, left, right);
+	while (index != k)
+	{
+		if (index > k)
+		{
+			right = index - 1;
+		}
+		else
+		{
+			left = index + 1;
+		}
+		index = Partition(input, left, right);
+	}
+	ret.resize(k);
+	for (int i = 0; i < k; ++i)
+	{
+		ret[i] = input[i];
+	}
+	sort(ret.begin(),ret.end());
+	return ret;
+}
+
+//O(n*lgk):堆排的思想
+void AdjustDown(vector<int>& vec, int parent = 0)
+{
+	int child = 2 * parent + 1;
+	size_t size = vec.size();
+	while (child < size)
+	{
+		if (child + 1 < size&&vec[child + 1] > vec[child])
+		{
+			++child;
+		}
+		if (vec[parent] < vec[child])
+		{
+			swap(vec[parent], vec[child]);
+			parent = child;
+			child = 2 * parent + 1;
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+vector<int> GetLeastNumbers_Heap(vector<int> input, int k)
+{
+	size_t size = input.size();
+	if (k >= size)
+	{
+		return input;
+	}
+	vector<int> ret;
+	if (k <= 0)
+	{
+		return ret;
+	}
+	ret.resize(k);
+	for (size_t i = 0; i < k; ++i)
+	{
+		ret[i] = input[i];
+	}
+	//建立k个数的大根堆
+	for (int i = (k - 2) / 2; i >= 0; --i)
+	{
+		AdjustDown(ret, i);
+	}
+	//遍历数据并调堆
+	for (int i = k; i < size; ++i)
+	{
+		if (ret[0] > input[i])
+		{
+			ret[0] = input[i];
+			AdjustDown(ret, 0);
+		}
+	}
+	sort(ret.begin(), ret.end());
+	return ret;
+}
