@@ -1,0 +1,112 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+#include <iostream>
+using namespace std;
+#include <string>
+#include <vector>
+
+/*
+*题目描述：输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印
+*能拼接出的所有数字中最小的一个。例如输入数组{3，32，321}，则打印出这三
+*个数字能排成的最小数字为321323。
+*题目分析：此题可转换对这些数字进行排序，但是排序的比较规则不再是数字意义
+*上的大小，而应该是：如果数字1）应该在数字2）前排列那么定义为1）< 2)
+*eg:（3 32）因为323<332，所以32<3;
+*另外，因为当数字连接起来后，很容易超出范围，所以应该用字符串保存结果
+*/
+struct Greater //比较规则
+{
+	bool operator()(const string& left, const string& right)
+	{
+		return (left + right > right + left);
+	}
+};
+struct Equal //比较规则
+{
+	bool operator()(const string& left, const string& right)
+	{
+		return (left + right == right + left);
+	}
+};
+string My_itoa(int num)
+{
+	string ret;
+	while (num)
+	{
+		ret.push_back(num % 10 + '0');
+		num /= 10;
+	}
+	int left = 0;
+	int right = ret.size() - 1;
+	while (left < right)
+	{
+		swap(ret[left++], ret[right--]);
+	}
+	return ret;
+}
+//快速排序
+template <typename T, class Compare = Greater, class Compare2 = Equal>
+int OneQuickSort(vector<T>& array, int left, int right) //一趟快排
+{
+	int low = left;
+	int high = right;
+	T tmp = array[right];
+	while (low < high)
+	{
+		//从左找第一个比tmp小的
+		while (low < high && (Compare()(tmp, array[low]) || Compare2()(tmp, array[low])))
+		{
+			++low;
+		}
+		if (low < high)
+		{
+			array[high] = array[low];
+			--high;
+		}
+		while (low < high && (Compare()(array[high], tmp) || Compare2()(array[high], tmp)))//从右找第一个比tmp大的
+		{
+			--high;
+		}
+		if (low < high)
+		{
+			array[low] = array[high];
+			++low;
+		}
+	}
+	array[low] = tmp;
+	return low;
+}
+template <typename T, class Compare = Greater, class Compare2 = Equal>
+void QuickSort(vector<T>& array, int left, int right)
+{
+	if (left < right)
+	{
+		int pos = OneQuickSort<T, Compare, Compare2>(array, left, right);
+		QuickSort<T, Compare, Compare2>(array, left, pos - 1);
+		QuickSort<T, Compare, Compare2>(array, pos + 1, right);
+	}
+}
+string PrintMinNumber(vector<int> numbers)
+{
+	size_t size = numbers.size();
+	vector<string> str(size);
+	string ret;
+	for (int i = 0; i < size; ++i)
+	{
+		str[i] = My_itoa(numbers[i]);
+	}
+	QuickSort(str, 0, size - 1);
+	for (int i = 0; i < size; ++i)
+	{
+		ret += str[i];
+	}
+	return ret;
+}
+
+int main()
+{
+	vector<int> numbers = { 3, 32, 312, 5, 6, 3 };
+	string ret = PrintMinNumber(numbers);
+	cout << ret << endl;
+	system("pause");
+	return 0;
+}
