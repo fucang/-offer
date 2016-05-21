@@ -1,0 +1,44 @@
+/*
+*题目描述：
+*把只包含因子2、3和5的数称作丑数（Ugly Number）。
+*例如6、8都是丑数，但14不是，因为它包含因子7。 
+*习惯上我们把1当做是第一个丑数。
+*求按从小到大的顺序的第N个丑数。
+*题目分析：
+*丑数应该是另一个丑数的2倍或3倍或5倍，所以只需按大小计算每个丑数
+*/
+int GetUglyNumber_Solution(int index)
+{
+	if (index <= 0)
+	{
+		return 0;
+	}
+	int count = 1;
+	int* num = new int[index];
+	num[0] = 1;
+	int* point2 = num;
+	int* point3 = num;
+	int* point5 = num;
+	while (count < index)
+	{
+		int min = *point2 * 2 <= *point3 * 3 ? (*point2 * 2) : (*point3 * 3);
+		min = min < (*point5 * 5) ? min : (*point5 * 5);
+		num[count++] = min;
+		while (*point2 * 2 <= min)
+		{
+			++point2;
+		}
+		while (*point3 * 3 <= min)
+		{
+			++point3;
+		}
+		while (*point5 * 5 <= min)
+		{
+			++point5;
+		}
+	}
+	  
+	int ret = num[index - 1];
+	delete[] num;
+	return ret;
+}
