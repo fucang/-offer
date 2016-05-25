@@ -1,0 +1,62 @@
+struct TreeNode
+{
+	int val;
+	TreeNode* left;
+	TreeNode* right;
+	TreeNode(int x) : val(x), left(NULL), right(NULL)
+	{}
+};
+
+/*计算二叉树的深度*/
+int TreeDepth(TreeNode* pRoot)
+{
+	if (pRoot == NULL)
+	{
+		return 0;
+	}
+	if (pRoot->left == NULL && pRoot->right == NULL)
+	{
+		return 1;
+	}
+	int left = TreeDepth(pRoot->left) + 1;
+	int right = TreeDepth(pRoot->right) + 1;
+	return left > right ? left : right;
+}
+
+/*判断该二叉树是否是平衡二叉树*/
+bool IsBalanced(TreeNode* pRoot, int& depth)
+{
+	if (pRoot == NULL)
+	{
+		depth = 0;
+		return true;
+	}
+	int left = depth;
+	int right = depth;
+	if (IsBalanced(pRoot->left, left) && IsBalanced(pRoot->right, right))
+	{
+		int diff = left - right;
+		if (diff >= -1 && diff <= 1)
+		{
+			depth = 1 + (left > right ? left : right);
+			return true;
+		}
+	}
+	return false;
+}
+bool IsBalanced_Solution(TreeNode* pRoot)
+{
+	//if (pRoot == NULL)
+	//{
+	//	return true;
+	//}
+	//int left = TreeDepth(pRoot->left);
+	//int right = TreeDepth(pRoot->right);
+	//if (left - right > 1 || left - right < -1)
+	//{
+	//	return false;
+	//}
+	//return IsBalanced_Solution(pRoot->left) && IsBalanced_Solution(pRoot->right);
+	int depth = 0;
+	return IsBalanced(pRoot, depth);
+}
