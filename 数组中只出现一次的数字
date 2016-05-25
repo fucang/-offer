@@ -1,0 +1,54 @@
+int FindFirstOne(int num)
+{
+	int count = 0;
+	while (((num & 1) == 0) && (count < 32))
+	{
+		++count;
+		num >>= 1;
+	}
+	if (count >= 32)
+	{
+		return -1;
+	}
+	return count;
+}
+void FindNumsAppearOnce(vector<int> data, int* num1, int *num2)
+{
+	if (num1 == NULL || num2 == NULL)
+	{
+		return;
+	}
+	int size = data.size();
+	*num1 = 0; *num2 = 0;
+	if (size < 2)
+	{
+		return;
+	}
+	if (size == 2)
+	{
+		*num1 = data[0];
+		*num2 = data[1];
+		return;
+	}
+	int diffOr = 0;
+	for (int i = 0; i < size; ++i)
+	{
+		diffOr ^= data[i];
+	}
+	int index = FindFirstOne(diffOr);
+	if (index < 0)
+	{
+		return;
+	}
+	for (int i = 0; i < size; ++i)
+	{
+		if (((data[i] >> index) & 1) == 1)
+		{
+			*num1 ^= data[i];
+		}
+		else
+		{
+			*num2 ^= data[i];
+		}
+	}
+}
