@@ -1,0 +1,71 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+#include <iostream>
+using namespace std;
+#include <string>
+#include <vector>
+
+/*和为s的两个数字*/
+vector<int> FindNumbersWithSum(const vector<int>& array, int sum) 
+{
+	vector<int> ret;
+	int left = 0;
+	int right = array.size() - 1;
+	while (left < right)
+	{
+		int tmp = array[left] + array[right];
+		if (tmp == sum)
+		{
+			ret.push_back(array[left]);
+			ret.push_back(array[right]);
+			break;
+		}
+		else if (tmp < sum)
+		{
+			++left;
+		}
+		else
+		{
+			--right;
+		}
+	}
+	return ret;
+}
+/*和为S的连续正数序列*/
+vector<int> OneSequence(int small, int big)
+{
+	vector<int> ret(big - small + 1);
+	for (int i = small; i <= big; ++i)
+	{
+		ret[i - small] = i;
+	}
+	return ret;
+}
+vector<vector<int> > FindContinuousSequence(int sum) 
+{
+	vector<vector<int>> ret;
+	if (sum < 3)
+	{
+		return ret;
+	}
+	int small = 1;
+	int big = 2;
+	int rentSum = small + big;
+	while (small < (sum + 1) / 2)
+	{
+		if (rentSum < sum)
+		{
+			++big;
+			rentSum += big;
+		}
+		else
+		{
+			if (rentSum == sum)
+			{
+				ret.push_back(OneSequence(small, big));
+			}
+			rentSum -= small;
+			++small;
+		}
+	}
+	return ret;
+}
