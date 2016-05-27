@@ -1,0 +1,45 @@
+//反转字符串
+void ReverseString(string& str, int left, int right)
+{
+	while (left < right)
+	{
+		swap(str[left++], str[right--]);
+	}
+}
+
+/*i am a student*/
+/*tneduts a ma i*/
+/*student a am i*/
+string ReverseSentence(string str) 
+{
+	int size = str.size();
+	ReverseString(str, 0, size - 1);
+	int left = 0;
+	int right = left;
+	while (right < size)
+	{
+		while (right < size && str[right] != ' ')
+		{
+			++right;
+		}	
+		ReverseString(str, left, right - 1);
+		left = right + 1;
+		right = left;		
+	}
+	return str;
+}
+
+/*
+*abcxyzdef
+*cbafedzyx
+*xyzdefabc
+*/
+string LeftRotateString(string str, int n)
+{
+	int size = str.size();
+	n = n%size;
+	ReverseString(str, 0, n - 1);
+	ReverseString(str, n, size - 1);
+	ReverseString(str, 0, size - 1);
+	return str;
+}
