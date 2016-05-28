@@ -1,0 +1,130 @@
+#include <vector>
+
+/*
+*LL今天心情特别好,因为他去买了一副扑克牌,发现里面居然有2个大王,
+*2个小王(一副牌原本是54张^_^)...他随机从中抽出了5张牌,想测测自己
+*的手气,看看能不能抽到顺子,如果抽到的话,他决定去买体育彩票,嘿嘿！！
+*“红心A,黑桃3,小王,大王,方片5”,“Oh My God!”不是顺子.....LL不高
+*兴了,他想了想,决定大\小 王可以看成任何数字,并且A看作1,J为11,Q为12,
+*K为13。上面的5张牌就可以变成“1,2,3,4,5”(大小王分别看作2和4),
+*“So Lucky!”。LL决定去买体育彩票啦。 现在,要求你使用这幅牌模拟
+*上面的过程,然后告诉我们LL的运气如何。为了方便起见,你可以认为大小
+*王是0。
+*/
+bool IsContinuous(vector<int> numbers) 
+{
+	int size = numbers.size();
+	if (size != 5)
+	{
+		return false;
+	}
+	for (int i = 1; i < size; ++i)
+	{
+		int tmp = numbers[i];
+		int j = i - 1;
+		while (j >= 0 && numbers[j]>tmp)
+		{
+			numbers[j + 1] = numbers[j];
+			--j;
+		}
+		numbers[j + 1] = tmp;
+	}
+	//计算0出现的次数
+	int countOfZero = 0;
+	for (int i = 0; i < size; ++i)
+	{
+		if (numbers[i] == 0)
+		{
+			++countOfZero;
+		}
+		else
+		{
+			break;
+		}
+	}
+	for (int i = countOfZero; i < size - 1; ++i)
+	{
+		if (numbers[i] == numbers[i + 1])
+		{
+			return false;
+		}
+		if (numbers[i + 1] - numbers[i] > 1)
+		{
+			countOfZero -= (numbers[i + 1] - numbers[i] - 1);
+			if (countOfZero < 0)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+/*
+*每年六一儿童节,NowCoder都会准备一些小礼物去看望孤儿院的小朋友,
+*今年亦是如此。HF作为NowCoder的资深元老,自然也准备了一些小游戏。
+*其中,有个游戏是这样的:首先,让小朋友们围成一个大圈。然后,他随机指
+*定一个数m,让编号为0的小朋友开始报数。每次喊到m的那个小朋友要出列
+*唱首歌,然后可以在礼品箱中任意的挑选礼物,并且不再回到圈中,从他的下
+*一个小朋友开始,继续0...m-1报数....这样下去....直到剩下最后一个小
+*朋友,可以不用表演,并且拿到NowCoder名贵的“名侦探柯南”典藏版(名额
+*有限哦!!^_^)。请你试着想下,哪个小朋友会得到这份礼品呢？
+*/
+int LastRemaining_Solution(unsigned int n, unsigned int m)
+{
+	vector<bool> vec(n);
+	size_t count = n;//可报数的人数
+	size_t index = 0;//开始报数的人的下标
+	while (count > 1)
+	{
+		int tmp = m - 1;
+		while (tmp)
+		{
+			if (!vec[index])
+			{
+				--tmp;
+			}	
+			index = (index + 1) % n;
+		}
+		while (vec[index])
+		{
+			index = (index + 1) % n;
+		}
+		vec[index] = true;
+		index = (index + 1) % n;
+		--count;
+	}
+	index = 0;
+	while (index < n && vec[index])
+	{
+		++index;
+	}
+	return index;
+}
+//迭代器法
+int LastRemaining_Solution(unsigned int n, unsigned int m)
+{
+	vector<int> vec;
+	for(int i = 0;i < n;++i)
+	{
+		vec.push_back(i);
+	}
+	vector<int>::iterator it = vec.begin();	
+	while(!(vec.size() == 1))
+	{
+		for(int i = 0;i < m;++i)
+		{
+			if (it == vec.end())
+			{
+				it = vec.begin();
+			}			
+			else
+			{
+				++it;
+			}
+		}		
+		it = vec.erase(it);		
+	}
+	it = vec.begin();
+	return *it;
+}
