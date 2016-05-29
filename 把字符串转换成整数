@@ -1,0 +1,56 @@
+/*
+*1、判断字符串是否合法
+*2、判断溢出
+*3、转换
+*/
+int StrToInt(string str)
+{
+	//空字符串
+	if (str == "")
+	{
+		cout << "字符串为空" << endl;
+		assert(false);
+	}
+	bool flag = true;
+	int value = 0;
+	int index = 0;
+
+	//去除前面的空格或tab键
+	while (isspace(str[index]))
+		++index;
+
+	//判断此数是正数还是负数
+	if (str[index] == '+' || str[index] == '-')
+	{
+		if (str[index] == '-')
+			flag = false;
+		if (str[index + 1] == '\0')//字符串只有个正号或负号
+		{
+			cout << "非法输入" << endl;
+			assert(false);
+		}
+		++index;
+	}
+
+	//进行转换
+	while (str[index] != '\0')
+	{
+		if (!(str[index] >= '0'&&str[index] <= '9'))
+		{
+			cout << "非法输入" << endl;
+			assert(false);
+		}
+		value = value * 10 + str[index++] - '0';
+
+		//是否溢出
+		if ((flag && (unsigned int)value > 0x7FFFFFFF)
+			|| (!flag&&(unsigned int)value > 0x80000000))
+		{
+			cout << "数据溢出" << endl;
+			assert(false);
+		}
+	}
+	if (!flag)
+		value = 0 - value;
+	return value;
+}
