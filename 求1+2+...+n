@@ -1,0 +1,117 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+/*
+*发散思维的能力：
+*46：求1+2+...+n
+*	1）利用构造函数求解
+*	2）利用虚函数求解
+*	3）利用函数指针求解
+*	4）利用模板类型求解
+*/
+
+#include <iostream>
+using namespace std;
+
+//46：求1+2+...+n
+/*利用构造函数求解*/
+class SumOneToN
+{
+public:
+	SumOneToN()
+	{
+		++_num;
+		_sum += _num;
+	}
+	static int Sum()
+	{
+		return _sum;
+	}
+	static int ReSet()
+	{
+		_num = 0;
+		_sum = 0;
+	}
+private:
+	static int _num;
+	static int _sum;
+};
+int SumOneToN::_num = 0;
+int SumOneToN::_sum = 0;
+
+/*利用虚函数求解*/
+class A;
+A* array[2];
+class A
+{
+public:
+	virtual int Sum(int n)
+	{
+		return 0;
+	}
+};
+class B :public A
+{
+public:
+	virtual int Sum(int n)
+	{
+		return array[!!n]->Sum(n - 1) + n;//要保证array的下标非0即1array[!!n]
+	}
+};
+
+/*利用函数指针求解*/
+typedef int(*fun)(int);//说明fun为一个函数指针
+int FunTeminator(int n)
+{
+	return 0;
+}
+int Sum(int n)
+{
+	static fun array[2] = { FunTeminator, Sum };
+	return array[!!n](n - 1) + n;
+}
+
+template <int n>
+struct TemplateSumN
+{
+	enum Value
+	{
+		N = TemplateSumN<n - 1>::N + n,
+
+	};
+};
+
+template <>
+struct TemplateSumN<1>
+{
+	enum Value
+	{
+		N = 1,
+	};
+};
+
+int main()
+{
+	int n = 100;
+
+	/*利用构造函数求解*/
+	//SumOneToN* array = new SumOneToN[n];
+	//delete[] array;
+	//cout << SumOneToN::Sum() << endl;
+
+	/*利用虚函数求解*/
+	//A a;
+	//B b;
+	//array[0] = &a;
+	//array[1] = &b;
+	//int value = array[1]->Sum(n);
+	//cout << value << endl;
+
+	/*利用函数指针求解*/
+	//int value = Sum(n);
+	//cout << value << endl;
+
+	/*利用模板类型求解*/
+	cout << TemplateSumN<100>::N << endl;
+
+	system("pause");
+	return 0;
+}
