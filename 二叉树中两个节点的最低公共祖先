@@ -1,0 +1,162 @@
+/*
+*二叉树中两个节点的最低公共祖先
+*1、该树为二叉搜索树
+*2、该树有父节点
+*3、普通的树
+*/
+
+//1、该树为二叉搜索树
+struct BSNode
+{
+	int _data;
+	BSNode* _left;
+	BSNode* _right;
+	BSNode(int data = 0) :_data(data), _left(NULL), _right(NULL)
+	{}
+};
+BSNode* GetLastCommonParent_1(BSNode* pRoot, BSNode* pNode1, BSNode* pNode2)
+{
+	if (pRoot == NULL || pNode1 == NULL || pNode2 == NULL)
+	{
+		return NULL;
+	}
+	if (pNode1 == pNode2)
+	{
+		return pNode1;
+	}
+	BSNode* cur = pRoot;
+	while (true)
+	{
+		if ((cur->_data >= pNode1->_data&&cur->_data<=pNode2->_data) ||
+		(cur->_data>=pNode2->_data&&cur->_data <= pNode1->_data))
+			return cur;
+		else if (cur->_data>pNode1->_data)
+		{
+			cur = cur->_left;
+		}
+		else
+		{
+			cur = cur->_right;
+		}
+	}
+	return NULL;
+}
+void testBSTree()
+{
+	BSNode* root1 = new BSNode(1);
+	BSNode* root2 = new BSNode(2);
+	BSNode* root3 = new BSNode(3);
+	BSNode* root4 = new BSNode(4);
+	BSNode* root5 = new BSNode(5);
+	BSNode* root6 = new BSNode(6);
+	BSNode* root7 = new BSNode(7);
+	BSNode* root8 = new BSNode(8);
+	BSNode* root9 = new BSNode(9);
+
+	root2->_left = root1;
+	root2->_right = root4;
+	root4->_left = root3;
+	root5->_left = root2;
+	root5->_right = root6;
+	root6->_right = root8;
+	root8->_left = root7;
+	root8->_right = root9;
+
+	BSNode* ret = GetLastCommonParent_1(root5, root1, root7);
+	cout << ret->_data << endl;
+
+}
+
+//2、该树有父节点
+struct BinTreePar
+{
+	int _data;
+	BinTreePar* _left;
+	BinTreePar* _right;
+	BinTreePar* _parent;
+	BinTreePar(int data = 0) :_data(data), _left(NULL), _right(NULL), _parent(NULL)
+	{}
+};
+int BinLen(BinTreePar* pRoot, BinTreePar* pNode)
+{
+	int count = 0;
+	BinTreePar* cur = pNode;
+	while (cur != pRoot)
+	{
+		++count;
+		cur = cur->_parent;
+	}
+	return count;
+}
+BinTreePar* GetLastCommonParent_2(BinTreePar* pRoot, BinTreePar* pNode1, BinTreePar* pNode2)
+{
+	if (pRoot == NULL || pNode1 == NULL || pNode2 == NULL)
+	{
+		return NULL;
+	}
+	if (pNode1 == pNode2)
+	{
+		return pNode1;
+	}
+	//类似相交单链表找相遇点
+	BinTreePar* curA = pNode1;
+	BinTreePar* curB = pNode2;
+
+	//计算到根节点的距离
+	int lenA = BinLen(pRoot, pNode1);
+	int lenB = BinLen(pRoot, pNode2);
+	int subLen = lenA - lenB;
+	if (subLen > 0)
+	{
+		while (subLen--)
+		{
+			curA = curA->_parent;
+		}
+	}
+	else if (subLen < 0)
+	{
+		while (subLen++)
+		{
+			curB = curB->_parent;
+		}
+	}
+	while (curA != curB)
+	{
+		curA = curA->_parent;
+		curB = curB->_parent;
+	}
+	return curA;
+}
+void testParTree()
+{
+	BinTreePar* root1 = new BinTreePar(1);
+	BinTreePar* root2 = new BinTreePar(2);
+	BinTreePar* root3 = new BinTreePar(3);
+	BinTreePar* root4 = new BinTreePar(4);
+	BinTreePar* root5 = new BinTreePar(5);
+	BinTreePar* root6 = new BinTreePar(6);
+	BinTreePar* root7 = new BinTreePar(7);
+	BinTreePar* root8 = new BinTreePar(8);
+	BinTreePar* root9 = new BinTreePar(9);
+
+	root1->_parent = root2;
+	root2->_left = root1;
+	root2->_right = root4;
+	root2->_parent = root5;
+	root3->_parent = root4;
+	root4->_left = root3;
+	root4->_parent = root2;
+	root5->_left = root2;
+	root5->_right = root6;
+	root6->_right = root8;
+	root6->_parent = root5;
+	root7->_parent = root8;
+	root8->_left = root7;
+	root8->_right = root9;
+	root8->_parent = root6;
+	root9->_parent = root8;
+
+	BinTreePar* ret = GetLastCommonParent_2(root5, root4, root3);
+	cout << ret->_data << endl;
+
+}
