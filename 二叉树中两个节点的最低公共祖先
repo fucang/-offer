@@ -160,3 +160,98 @@ void testParTree()
 	cout << ret->_data << endl;
 
 }
+
+//3、普通的树
+#include <list>
+struct BinTree
+{
+	int _data;
+	BinTree* _left;
+	BinTree* _right;
+	BinTree(int data = 0) :_data(data), _left(NULL), _right(NULL)
+	{}
+};
+//寻找路径
+bool FindRoot(BinTree* pRoot, BinTree* pNode, list<BinTree*>& listRoot)
+{
+	if (pRoot == NULL || pNode == NULL)
+	{
+		return true;
+	}
+	listRoot.push_back(pRoot);
+	if (pRoot == pNode)
+	{
+		return true;
+	}
+	if (pRoot->_left)
+	{
+		bool ret = FindRoot(pRoot->_left, pNode, listRoot);
+		if (ret)
+		{
+			return true;
+		}
+	}
+	if (pRoot->_right)
+	{
+		bool ret = FindRoot(pRoot->_right, pNode, listRoot);
+		if (ret)
+		{
+			return true;
+		}
+	}
+	listRoot.pop_back();
+}
+BinTree* GetLastCommonParent_3(BinTree* pRoot, BinTree* pNode1, BinTree* pNode2)
+{
+	//找到由根节点到pNode1、pNode2的路径，再找最后一个相同的结点，用list保存路径
+	if (pRoot == NULL || pNode1 == NULL || pNode2 == NULL)
+	{
+		return NULL;
+	}
+	if (pNode1 == pNode2)
+	{
+		return pNode1;
+	}
+	list<BinTree*> listRoot1;
+	list<BinTree*> listRoot2;
+	FindRoot(pRoot, pNode1, listRoot1);
+	FindRoot(pRoot, pNode2, listRoot2);
+	list<BinTree*>::iterator iteA = listRoot1.begin();
+	list<BinTree*>::iterator iteB = listRoot2.begin();
+	BinTree* ret = listRoot1.front();
+	list<BinTree*>::iterator end = listRoot1.end();
+	
+	while (iteA != listRoot1.end() && iteB != listRoot2.end() && (*iteA)->_data == (*iteB)->_data)
+	{
+		ret = *iteA;
+		++iteA;
+		++iteB;
+	}
+
+	return ret;
+
+}
+void testBinTree()
+{
+	BinTree* root1 = new BinTree(1);
+	BinTree* root2 = new BinTree(2);
+	BinTree* root3 = new BinTree(3);
+	BinTree* root4 = new BinTree(4);
+	BinTree* root5 = new BinTree(5);
+	BinTree* root6 = new BinTree(6);
+	BinTree* root7 = new BinTree(7);
+	BinTree* root8 = new BinTree(8);
+	BinTree* root9 = new BinTree(9);
+
+	root2->_left = root1;
+	root2->_right = root4;
+	root4->_left = root3;
+	root5->_left = root2;
+	root5->_right = root6;
+	root6->_right = root8;
+	root8->_left = root7;
+	root8->_right = root9;
+
+	BinTree* ret = GetLastCommonParent_3(root5, root4, root3);
+	cout << ret->_data << endl;
+}
