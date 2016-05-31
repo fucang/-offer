@@ -1,0 +1,53 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+#include <iostream>
+using namespace std;
+
+void PrintfNumber(char* number, int length)
+{
+	//找第一个不是0的位
+	int index = 0;
+	while (index < length&&number[index] == '0')
+	{
+		++index;
+	}
+	for (int i = 0; i < 10; ++i)
+	{
+		number[length - 1] = i + '0';
+		
+		cout << number + index << " ";
+	}
+	cout << endl;
+}
+
+void Print1TomaxOfDigitsNumber(char* number, int length, int index)
+{
+	if (index == length - 1)
+	{
+		PrintfNumber(number, length);
+		return;
+	}
+	for (int i = 0; i < 10; ++i)
+	{
+		number[index] = i + '0';
+		Print1TomaxOfDigitsNumber(number, length, index + 1);
+	}
+}
+
+void Print1ToMaxOfNDigits(int n)
+{
+	if (n <= 0)
+		return;
+	char* number = new char[n + 1];
+	number[n] = '\0';
+
+	Print1TomaxOfDigitsNumber(number, n, 0);
+
+	delete[] number;
+}
+
+int main()
+{
+	Print1ToMaxOfNDigits(3);
+	system("pause");
+	return 0;
+}
