@@ -1,0 +1,55 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+#include <iostream>
+using namespace std;
+
+#include <vector>
+
+//所有的左子树的结点均小于根节点，右子树的结点均大于根节点
+//根节点在最后
+
+bool IsTrueSeq(const vector<int>& sequence, int left, int right)
+{
+	if (right - left  <= 0)
+	{
+		return true;
+	}
+	int root = sequence[right];
+
+	//在二叉树中寻找比根节点小的结点
+	int minIndex = left;
+	for (; minIndex < right; ++minIndex)
+	{
+		if (sequence[minIndex] > root)
+		{
+			break;
+		}
+	}
+	//后面的元素为右子树，且肯定大于root,否则返回false
+	int i = minIndex;
+	for (; i < right; ++i)
+	{
+		if (sequence[i] < root)
+		{
+			return false;
+		}
+	}
+	return IsTrueSeq(sequence, left, minIndex - 1) && IsTrueSeq(sequence, minIndex, right - 1);
+}
+
+bool IsSequenceOfBSTree(const vector<int>& sequence)
+{
+	int size = sequence.size();
+	if (size == 0)
+	{
+		return false;
+	}
+	return IsTrueSeq(sequence, 0, size - 1);
+}
+
+int main()
+{
+	vector<int> vec = { 5, 7, 6, 9, 11, 10, 8 };
+	cout << IsSequenceOfBSTree(vec) << endl;
+	system("pause");
+	return 0;
+}
