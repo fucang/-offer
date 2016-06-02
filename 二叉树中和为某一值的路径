@@ -1,0 +1,97 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+#include <iostream>
+using namespace std;
+
+#include <vector>
+
+struct TreeNode
+{
+	int val;
+	TreeNode* left;
+	TreeNode* right;
+	TreeNode(int x) :val(x), left(NULL), right(NULL)
+	{}
+};
+
+int Sum(const vector<int>& path)
+{
+	int size = path.size();
+	int sum = 0;
+	for (int i = 0; i < size; ++i)
+	{
+		sum += path[i];
+	}
+	return sum;
+}
+
+void FindPathOfRoot(TreeNode* root, int expectNumber, vector<vector<int>>& vec, vector<int>& path, int& sum)
+{
+	if (root == NULL)
+		return;
+	sum += root->val;
+	path.push_back(root->val);
+	if (sum == expectNumber && root->left == NULL && root->right == NULL)
+	{
+		vec.push_back(path);
+		sum -= path[path.size() - 1];
+		path.pop_back();
+		return;
+	}
+	if (root->left == NULL && root->right == NULL)
+	{
+		sum -= path[path.size() - 1];
+		path.pop_back();
+		return;
+	}
+	if (sum < expectNumber)
+	{
+		FindPathOfRoot(root->left, expectNumber, vec, path, sum);
+		FindPathOfRoot(root->right, expectNumber, vec, path, sum);
+		sum -= path[path.size() - 1];
+		path.pop_back();
+	}
+}
+
+vector<vector<int>> FindPath(TreeNode* root, int expectNumber) 
+{
+	vector<vector<int>> vec;
+	if (root == NULL)
+	{
+		return vec;
+	}
+	vector<int> path;
+	int index = 0;
+	FindPathOfRoot(root, expectNumber, vec, path, index);
+	return vec;
+}
+
+void test()
+{
+	TreeNode* root = new TreeNode(10);
+	TreeNode* node1 = new TreeNode(5);
+	TreeNode* node2 = new TreeNode(12);
+	TreeNode* node3 = new TreeNode(4);
+	TreeNode* node4 = new TreeNode(9);
+	root->left = node1;
+	root->right = node2;
+	node1->left = node3;
+	node1->right = node4;
+	vector<vector<int>> ret = FindPath(root, 22);
+	int size = ret.size();
+	for (int i = 0; i < size; ++i)
+	{
+		int len = ret[i].size();
+		for (int j = 0; j < len; ++j)
+		{
+			cout << ret[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
+
+int main()
+{
+	test();
+	system("pause");
+	return 0;
+}
