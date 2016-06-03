@@ -1,0 +1,51 @@
+
+struct TreeNode 
+{
+	int val;
+	struct TreeNode *left;
+	struct TreeNode *right;
+	TreeNode(int x) : val(x), left(NULL), right(NULL) 
+	{}
+};
+
+//因为不知道right结点是什么，所以等到处理right结点时，让pLast->right = right即可
+//类似于线索化二叉树
+void ConvertNode(TreeNode* root,TreeNode* &pLast)
+{
+	if (root == NULL)
+	{
+		return;
+	}
+	
+	if (root->left)
+	{
+		ConvertNode(root->left, pLast);
+	}
+
+	root->left = pLast;
+
+	if (pLast)//第一次不用处理
+	{
+		pLast->right = root;
+	}
+
+	pLast = root;
+
+	if (root->right)
+	{
+		ConvertNode(root->right, pLast);
+	}
+}
+
+TreeNode* Convert(TreeNode* pRootOfTree)
+{
+	if (pRootOfTree == NULL)
+	{
+		return NULL;
+	}
+	TreeNode* pLast = NULL;
+	ConvertNode(pRootOfTree, pLast);
+	while (pLast->left)
+		pLast = pLast->left;
+	return pLast;
+}
