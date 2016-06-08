@@ -1,0 +1,57 @@
+/*
+*给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。
+*注意，树中的结点不仅包含左右子结点，同时包含指向父结点的指针。
+*/
+/*
+*分为三种情况：
+*	1）如果一个结点有右子树，那么下一个结点就是右子树的最左结点
+*	2）如果一个结点没有右子树，那么如果这个结点是其父结点的左子结点，那么下一个结点就是其父结点
+*	3）如果一个结点既没有右子树且这个结点是其父结点的右子结点，那么下一个结点是沿着指向父结点
+*	   的指针一直向上遍历，直到找到一个结点是它父结点的左子结点，那么这个结点的父结点就是我们要
+*	   找的下一个结点
+*/
+struct TreeLinkNode 
+{
+	int val;
+	struct TreeLinkNode *left;
+	struct TreeLinkNode *right;
+	struct TreeLinkNode *next;
+	TreeLinkNode(int x) :val(x), left(NULL), right(NULL), next(NULL)
+	{}
+};
+TreeLinkNode* GetNext(TreeLinkNode* pNode)
+{
+	if (pNode == NULL)
+		return NULL;
+	TreeLinkNode* parent = pNode->next;
+	//1）如果一个结点有右子树，那么下一个结点就是右子树的最左结点
+	if (pNode->right != NULL)
+	{
+		TreeLinkNode* cur = pNode->right;
+		while (cur->left != NULL)
+		{
+			cur = cur->left;
+		}
+		return cur;
+	}
+	//如果这个结点是其父结点的左子结点
+	else if ((parent != NULL) && (pNode == parent->left))
+	{
+		return parent;
+	}
+	//沿着指向父结点的指针一直向上遍历，直到找到一个结点是它父结点的左子结点
+	else
+	{
+		TreeLinkNode* grandFather = NULL;
+		while (parent != NULL)
+		{
+			grandFather = parent->next;
+			if ((grandFather != NULL) && (grandFather->left == parent))
+			{
+				return grandFather;
+			}
+			parent = grandFather;
+		}
+	}
+	return NULL;
+}
