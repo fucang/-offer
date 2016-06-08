@@ -1,0 +1,58 @@
+/*
+*在一个排序的链表中，存在重复的结点，请删除该链表中重复的结点，
+*重复的结点不保留，返回链表头指针。
+*例如，链表1->2->3->3->4->4->5 处理后为 1->2->5
+*/
+/*1->1->1->2->3->3->4->4->5 处理后：2->5*/
+struct ListNode 
+{
+	int val;
+	struct ListNode *next;
+	ListNode(int x) : val(x), next(NULL) 
+	{}
+};
+ListNode* deleteDuplication(ListNode* pHead)
+{
+	if (pHead == NULL)
+	{
+		return NULL;
+	}
+	ListNode* cur = pHead;
+	ListNode* head = pHead;
+	ListNode* prev = NULL;
+	bool flag = false;
+	ListNode* del = NULL;
+	while (cur != NULL)
+	{
+		flag = false;//标志有没有删除过结点
+		while ((cur->next != NULL) && (cur->next->val == cur->val))
+		{
+			del = cur->next;
+			cur->next = del->next;
+			delete del;
+			del = NULL;
+			flag = true;
+		}
+		if (flag)
+		{
+			if (cur == head)//cur为头
+			{
+				head = cur->next;
+			}
+			del = cur;
+			cur = cur->next;
+			if (prev != NULL)
+			{
+				prev->next = cur;
+			}
+			delete del;
+			del = NULL;
+		}
+		else
+		{
+			prev = cur;
+			cur = cur->next;
+		}
+	}
+	return head;
+}
