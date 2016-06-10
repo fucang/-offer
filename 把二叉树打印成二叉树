@@ -1,0 +1,41 @@
+/*从上到下按层打印二叉树，同一层结点从左至右输出。每一层输出一行。*/
+vector<vector<int>> Print(TreeNode* pRoot) 
+{
+	vector<vector<int>> ret;
+	if (pRoot == NULL)
+	{
+		return ret;
+	}
+	vector<int> tmp;
+	queue<TreeNode*> q;
+	q.push(pRoot);
+	TreeNode* front = NULL;
+	int nextLevel = 0;
+	int level = 1;
+	while (!q.empty())
+	{
+		front = q.front();
+		tmp.push_back(front->val);
+		--level;
+		if (front->left)
+		{
+			q.push(front->left);
+			++nextLevel;
+		}
+		if (front->right)
+		{
+			q.push(front->right);
+			++nextLevel;
+		}
+		if (level == 0)
+		{
+			//cout << endl;
+			level = nextLevel;
+			nextLevel = 0;
+			ret.push_back(tmp);
+			tmp.clear();
+		}
+		q.pop();
+	}
+	return ret;
+}
