@@ -1,0 +1,81 @@
+/*
+*假如已知有n个人和m对好友关系（存于数字r）。如果两个人是直接或间接的
+*好友（好友的好友的好友...），则认为他们属于同一个朋友圈，请写程序求
+*出这n个人里一共有多少个朋友圈。
+*假如：n = 5，m = 3，r = {{1 , 2} , {2 , 3} , {4 , 5}}，表示有5个人，
+*1和2是好友，2和3是好友，4和5是好友，则1、2、3属于一个朋友圈，4、5属于
+*另一个朋友圈，结果为2个朋友圈。
+*最后请分析所写代码的时间、空间复杂度。评分会参考代码的正确性和效率。
+*/
+/*并查集的思想，时间复杂度：O(n),空间复杂度：O(n)*/
+int FindRoot(int* set, int child);
+void UoionFrind(int* set, int root1, int root2);
+int Frinds(int n, int m, int r[][2])
+{
+	int* set = new int[n];
+	//初始化并查集
+	for (int i = 0; i < n; ++i)
+	{
+		set[i] = -1;
+	}
+	//遍历朋友关系
+	for (int i = 0; i < m; ++i)
+	{
+		int root1 = FindRoot(set, r[i][0] - 1);
+		int root2 = FindRoot(set, r[i][1] - 1);
+		UoionFrind(set, root1, root2);
+	}
+	//计算朋友圈的个数，set数组中小于0的个数即为朋友圈的个数
+	int count = 0;
+	for (int i = 0; i < n; ++i)
+	{
+		if (set[i] < 0)
+		{
+			++count;
+		}
+	}
+	delete[] set;
+	return count;
+}
+
+int FindRoot(int* set, int child)
+{
+	assert(set);
+	int root = child;
+	while (set[root] >= 0)
+	{
+		root = set[root];
+	}
+	return root;
+}
+
+void UoionFrind(int* set, int root1, int root2)
+{
+	assert(set);
+	assert(set[root1]< 0);
+	assert(set[root2] < 0);//并查集出现错误
+	//如果root1 == root2，两个已经属于同一个集合，已不需要合并
+	if (root1 != root2)
+	{
+		//root1的结点比root2的结点多，将2并入1
+		if (set[root1] <= set[root2])
+		{
+			set[root1] += set[root2];
+			set[root2] = root1;
+		}
+		else//将1并入2
+		{
+			set[root2] += set[root1];
+			set[root1] = root2;
+		}
+	}
+}
+
+//测试
+void test()
+{
+	const int n = 5;
+	const int m = 3;
+	int r[][2] = { { 1, 2 }, { 2, 3 }, { 4, 5 } };
+	cout << Frinds(n, m, r) << endl;//输出2
+}
